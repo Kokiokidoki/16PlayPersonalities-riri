@@ -11,14 +11,22 @@ const questionsPerPage = 10;
 document.addEventListener('DOMContentLoaded', function() {
     const currentPage = window.location.pathname.split('/').pop();
     
+    console.log('ページ読み込み開始');
+    console.log('現在のページ:', currentPage);
+    console.log('現在のURL:', window.location.href);
+    console.log('パス:', window.location.pathname);
+    
     if (currentPage === 'diagnosis.html' || currentPage === '') {
         // ルートページ（index.html）の場合も診断ページとして扱う
         if (currentPage === '') {
+            console.log('ルートページを診断ページにリダイレクト');
             window.location.href = 'diagnosis.html';
             return;
         }
+        console.log('診断ページを初期化');
         initializeDiagnosis();
     } else if (currentPage === 'result.html') {
+        console.log('結果ページを初期化');
         initializeResult();
     }
 });
@@ -26,10 +34,16 @@ document.addEventListener('DOMContentLoaded', function() {
 // 診断ページの初期化
 async function initializeDiagnosis() {
     try {
+        console.log('診断ページ初期化開始');
+        
         // 質問データを読み込み（現在のページのパスを基準とした相対パス）
         const currentPath = window.location.pathname;
         const basePath = currentPath.substring(0, currentPath.lastIndexOf('/') + 1);
-        const response = await fetch(basePath + 'questions.json', {
+        const questionsUrl = basePath + 'questions.json';
+        
+        console.log('質問データ読み込み開始:', questionsUrl);
+        
+        const response = await fetch(questionsUrl, {
             method: 'GET',
             headers: {
                 'Accept': 'application/json',
@@ -45,7 +59,7 @@ async function initializeDiagnosis() {
         
         // デバッグ情報
         console.log('質問データ読み込み成功:', questions.length, '件');
-        console.log('読み込みパス:', basePath + 'questions.json');
+        console.log('読み込みパス:', questionsUrl);
         
         // 最初のページを表示
         displayCurrentPage();
@@ -53,12 +67,22 @@ async function initializeDiagnosis() {
         // 進捗カウンターを更新
         updateProgress();
         
+        console.log('診断ページ初期化完了');
+        
     } catch (error) {
         console.error('質問データの読み込みに失敗しました:', error);
+        console.error('エラー詳細:', error.message);
+        
         // エラーメッセージを表示
         const container = document.getElementById('questions-container');
         if (container) {
-            container.innerHTML = '<div class="error-message">質問データの読み込みに失敗しました。ページを再読み込みしてください。</div>';
+            container.innerHTML = `
+                <div class="error-message">
+                    質問データの読み込みに失敗しました。<br>
+                    ページを再読み込みしてください。<br>
+                    エラー: ${error.message}
+                </div>
+            `;
         }
     }
 }
