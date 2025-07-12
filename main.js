@@ -26,8 +26,10 @@ document.addEventListener('DOMContentLoaded', function() {
 // 診断ページの初期化
 async function initializeDiagnosis() {
     try {
-        // 質問データを読み込み
-        const response = await fetch('questions.json', {
+        // 質問データを読み込み（現在のページのパスを基準とした相対パス）
+        const currentPath = window.location.pathname;
+        const basePath = currentPath.substring(0, currentPath.lastIndexOf('/') + 1);
+        const response = await fetch(basePath + 'questions.json', {
             method: 'GET',
             headers: {
                 'Accept': 'application/json',
@@ -41,6 +43,10 @@ async function initializeDiagnosis() {
         
         questions = await response.json();
         
+        // デバッグ情報
+        console.log('質問データ読み込み成功:', questions.length, '件');
+        console.log('読み込みパス:', basePath + 'questions.json');
+        
         // 最初のページを表示
         displayCurrentPage();
         
@@ -49,7 +55,11 @@ async function initializeDiagnosis() {
         
     } catch (error) {
         console.error('質問データの読み込みに失敗しました:', error);
-        // エラーメッセージは表示しない
+        // エラーメッセージを表示
+        const container = document.getElementById('questions-container');
+        if (container) {
+            container.innerHTML = '<div class="error-message">質問データの読み込みに失敗しました。ページを再読み込みしてください。</div>';
+        }
     }
 }
 
@@ -67,8 +77,10 @@ async function initializeResult() {
             return;
         }
         
-        // 結果データを読み込み
-        const response = await fetch('results.json', {
+        // 結果データを読み込み（現在のページのパスを基準とした相対パス）
+        const currentPath = window.location.pathname;
+        const basePath = currentPath.substring(0, currentPath.lastIndexOf('/') + 1);
+        const response = await fetch(basePath + 'results.json', {
             method: 'GET',
             headers: {
                 'Accept': 'application/json',
@@ -82,12 +94,20 @@ async function initializeResult() {
         
         results = await response.json();
         
+        // デバッグ情報
+        console.log('結果データ読み込み成功:', Object.keys(results).length, '件');
+        console.log('読み込みパス:', basePath + 'results.json');
+        
         // 結果を表示
         displayResult(typeCode);
         
     } catch (error) {
         console.error('結果データの読み込みに失敗しました:', error);
-        // エラーメッセージは表示しない
+        // エラーメッセージを表示
+        const container = document.querySelector('.result-container');
+        if (container) {
+            container.innerHTML = '<div class="error-message">結果データの読み込みに失敗しました。ページを再読み込みしてください。</div>';
+        }
     }
 }
 
