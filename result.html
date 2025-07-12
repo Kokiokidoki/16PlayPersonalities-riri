@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>診断結果 - 16PlayPersonalities診断</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>16PlayPersonalities診断</h1>
+            <p>あなたの遊び方の診断結果</p>
+        </div>
+        
+        <div class="result-container">
+            <div class="result-header">
+                <div class="result-type" id="type-name">読み込み中...</div>
+                <div class="result-code" id="type-code">-</div>
+                <div class="result-group" id="group">-</div>
+            </div>
+            
+            <div class="result-description" id="description">
+                診断結果を読み込み中...
+            </div>
+            
+            <div class="button-group">
+                <button onclick="restartDiagnosis()" class="btn btn-secondary">診断をやり直す</button>
+                <button onclick="backToDiagnosis()" class="btn">診断ページに戻る</button>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>16PlayPersonalities診断 - あなたの遊び方を見つけよう</p>
+        </div>
+    </div>
+    
+    <script src="main.js"></script>
+</body>
+</html> 

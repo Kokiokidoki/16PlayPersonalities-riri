@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>診断中 - 16PlayPersonalities診断</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>16PlayPersonalities診断</h1>
+            <p>あなたの遊び方を見つけましょう</p>
+        </div>
+        
+        <div class="progress-container">
+            <div class="progress-text">回答進捗</div>
+            <div id="progress">0/80</div>
+            <div class="page-info">
+                <span id="current-page">1</span> / <span id="total-pages">8</span> ページ
+            </div>
+        </div>
+        
+        <div id="questions-container">
+            <div class="loading">質問を読み込み中...</div>
+        </div>
+        
+        <div class="navigation-buttons" style="text-align: center; margin: 30px 0;">
+            <button id="prev-button" onclick="previousPage()" class="btn btn-secondary" style="display: none;">前のページ</button>
+            <button id="next-button" onclick="nextPage()" class="btn">次のページ</button>
+            <button id="result-button" onclick="calculateResult()" class="btn" style="display: none;">結果を見る</button>
+        </div>
+        
+        <div class="footer">
+            <p>すべての質問に回答してから結果を確認してください</p>
+        </div>
+    </div>
+    
+    <script src="main.js"></script>
+
+</body>
+</html> 
