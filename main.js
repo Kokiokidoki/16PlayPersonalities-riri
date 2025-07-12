@@ -36,20 +36,56 @@ async function initializeDiagnosis() {
     try {
         console.log('診断ページ初期化開始');
         
-        // 質問データを読み込み（現在のページのパスを基準とした相対パス）
+        // 質問データを読み込み（複数のパスを試行）
+        let questionsUrl = '';
+        let response = null;
+        
+        // パス1: 現在のページのパスを基準とした相対パス
         const currentPath = window.location.pathname;
         const basePath = currentPath.substring(0, currentPath.lastIndexOf('/') + 1);
-        const questionsUrl = basePath + 'questions.json';
+        questionsUrl = basePath + 'questions.json';
         
-        console.log('質問データ読み込み開始:', questionsUrl);
+        console.log('質問データ読み込み開始 (パス1):', questionsUrl);
         
-        const response = await fetch(questionsUrl, {
-            method: 'GET',
-            headers: {
-                'Accept': 'application/json',
-                'Cache-Control': 'no-cache'
+        try {
+            response = await fetch(questionsUrl, {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json',
+                    'Cache-Control': 'no-cache'
+                }
+            });
+        } catch (error) {
+            console.log('パス1で失敗、パス2を試行');
+            
+            // パス2: ルートパスからの相対パス
+            questionsUrl = '/questions.json';
+            console.log('質問データ読み込み開始 (パス2):', questionsUrl);
+            
+            try {
+                response = await fetch(questionsUrl, {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Cache-Control': 'no-cache'
+                    }
+                });
+            } catch (error2) {
+                console.log('パス2で失敗、パス3を試行');
+                
+                // パス3: 現在のディレクトリからの相対パス
+                questionsUrl = './questions.json';
+                console.log('質問データ読み込み開始 (パス3):', questionsUrl);
+                
+                response = await fetch(questionsUrl, {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Cache-Control': 'no-cache'
+                    }
+                });
             }
-        });
+        }
         
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
@@ -59,7 +95,7 @@ async function initializeDiagnosis() {
         
         // デバッグ情報
         console.log('質問データ読み込み成功:', questions.length, '件');
-        console.log('読み込みパス:', questionsUrl);
+        console.log('成功したパス:', questionsUrl);
         
         // 最初のページを表示
         displayCurrentPage();
@@ -80,7 +116,8 @@ async function initializeDiagnosis() {
                 <div class="error-message">
                     質問データの読み込みに失敗しました。<br>
                     ページを再読み込みしてください。<br>
-                    エラー: ${error.message}
+                    エラー: ${error.message}<br>
+                    試行したパス: ${questionsUrl || '不明'}
                 </div>
             `;
         }
@@ -101,16 +138,56 @@ async function initializeResult() {
             return;
         }
         
-        // 結果データを読み込み（現在のページのパスを基準とした相対パス）
+        // 結果データを読み込み（複数のパスを試行）
+        let resultsUrl = '';
+        let response = null;
+        
+        // パス1: 現在のページのパスを基準とした相対パス
         const currentPath = window.location.pathname;
         const basePath = currentPath.substring(0, currentPath.lastIndexOf('/') + 1);
-        const response = await fetch(basePath + 'results.json', {
-            method: 'GET',
-            headers: {
-                'Accept': 'application/json',
-                'Cache-Control': 'no-cache'
+        resultsUrl = basePath + 'results.json';
+        
+        console.log('結果データ読み込み開始 (パス1):', resultsUrl);
+        
+        try {
+            response = await fetch(resultsUrl, {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json',
+                    'Cache-Control': 'no-cache'
+                }
+            });
+        } catch (error) {
+            console.log('パス1で失敗、パス2を試行');
+            
+            // パス2: ルートパスからの相対パス
+            resultsUrl = '/results.json';
+            console.log('結果データ読み込み開始 (パス2):', resultsUrl);
+            
+            try {
+                response = await fetch(resultsUrl, {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Cache-Control': 'no-cache'
+                    }
+                });
+            } catch (error2) {
+                console.log('パス2で失敗、パス3を試行');
+                
+                // パス3: 現在のディレクトリからの相対パス
+                resultsUrl = './results.json';
+                console.log('結果データ読み込み開始 (パス3):', resultsUrl);
+                
+                response = await fetch(resultsUrl, {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Cache-Control': 'no-cache'
+                    }
+                });
             }
-        });
+        }
         
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
@@ -120,17 +197,26 @@ async function initializeResult() {
         
         // デバッグ情報
         console.log('結果データ読み込み成功:', Object.keys(results).length, '件');
-        console.log('読み込みパス:', basePath + 'results.json');
+        console.log('成功したパス:', resultsUrl);
         
         // 結果を表示
         displayResult(typeCode);
         
     } catch (error) {
         console.error('結果データの読み込みに失敗しました:', error);
+        console.error('エラー詳細:', error.message);
+        
         // エラーメッセージを表示
         const container = document.querySelector('.result-container');
         if (container) {
-            container.innerHTML = '<div class="error-message">結果データの読み込みに失敗しました。ページを再読み込みしてください。</div>';
+            container.innerHTML = `
+                <div class="error-message">
+                    結果データの読み込みに失敗しました。<br>
+                    ページを再読み込みしてください。<br>
+                    エラー: ${error.message}<br>
+                    試行したパス: ${resultsUrl || '不明'}
+                </div>
+            `;
         }
     }
 }
